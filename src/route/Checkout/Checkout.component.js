@@ -3,6 +3,7 @@ import { PureComponent } from "react";
 import { Checkout as SourceCheckout } from "SourceRoute/Checkout/Checkout.component";
 import ContentWrapper from "Component/ContentWrapper";
 import Done from "./done.svg";
+import "./Checkout.override.style.scss";
 
 class Checkout extends SourceCheckout {
 	// divide the bar into 3 segments
@@ -17,61 +18,57 @@ class Checkout extends SourceCheckout {
 		const { checkoutStep } = this.props;
 
 		const progressBar = document.querySelector(".progress-bar");
-
+		console.log(progressBar);
 		if (checkoutStep === SHIPPING_STEP) {
-			progressBar.style.setProperty("progress", "40%");
+			progressBar?.style.setProperty("--progress", "40%");
+			return (
+				<div className="progress-bar">
+					<div className="step shipping active">
+						<span>1</span>
+						<span className="text">shipping</span>
+					</div>
+					<div className="step payment">
+						<span>2</span>
+						<span className="text">review & Payment</span>
+					</div>
+				</div>
+			);
 		} else if (checkoutStep === BILLING_STEP) {
-			progressBar.style.setProperty("progress", "60%");
-		} else {
-			progressBar.style.setProperty("progress", "100%");
+			progressBar?.style.setProperty("--progress", "60%");
+			console.log("done");
+			return (
+				<div className="progress-bar">
+					<div className="step shipping active">
+						<span className="done">
+							<img src={Done} alt="complete" />
+						</span>
+						<span className="text">shipping</span>
+					</div>
+					<div className="step payment active">
+						<span>2</span>
+						<span className="text">review & Payment</span>
+					</div>
+				</div>
+			);
+		} else if (checkoutStep === DETAILS_STEP) {
+			progressBar?.style.setProperty("--progress", "100%");
+			return (
+				<div className="progress-bar">
+					<div className="step shipping active">
+						<span className="done">
+							<img src={Done} alt="complete" />
+						</span>
+						<span className="text">shipping</span>
+					</div>
+					<div className="step payment active">
+						<span className="done">
+							<img src={Done} alt="complete" />
+						</span>
+						<span className="text">review & Payment</span>
+					</div>
+				</div>
+			);
 		}
-
-		return (
-			<div className="progress-bar">
-				{checkoutStep === SHIPPING_STEP && (
-					<>
-						<div className="step shipping active">
-							<span>1</span>
-							<span className="text">shipping</span>
-						</div>
-						<div className="step payment">
-							<span>2</span>
-							<span className="text">review & Payment</span>
-						</div>
-					</>
-				)}
-				{checkoutStep === BILLING_STEP && (
-					<>
-						<div className="step shipping active">
-							<span>
-								<img src={Done} alt="complete" />
-							</span>
-							<span className="text">shipping</span>
-						</div>
-						<div className="step payment active">
-							<span>2</span>
-							<span className="text">review & Payment</span>
-						</div>
-					</>
-				)}
-				{checkoutStep === DETAILS_STEP && (
-					<>
-						<div className="step shipping active">
-							<span>
-								<img src={Done} alt="complete" />
-							</span>
-							<span className="text">shipping</span>
-						</div>
-						<div className="step payment active">
-							<span>
-								<img src={Done} alt="complete" />
-							</span>
-							<span className="text">review & Payment</span>
-						</div>
-					</>
-				)}
-			</div>
-		);
 	}
 
 	render() {
