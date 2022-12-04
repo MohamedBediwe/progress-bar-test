@@ -6,69 +6,40 @@ import Done from "./done.svg";
 import "./Checkout.override.style.scss";
 
 class Checkout extends SourceCheckout {
-	// divide the bar into 3 segments
-	// fill the first part of the bar
-	// if the first process is complete fill the second part
-	// if the second part is complete fill the third part
-
 	renderProgressBar() {
-		const SHIPPING_STEP = "SHIPPING_STEP";
-		const BILLING_STEP = "BILLING_STEP";
-		const DETAILS_STEP = "DETAILS_STEP";
 		const { checkoutStep } = this.props;
-
+		const DETAILS_STEP = "DETAILS_STEP";
+		const steps = Object.keys(this.stepMap);
+		const currentStepIndex = steps.findIndex((e) => e === checkoutStep);
 		const progressBar = document.querySelector(".progress-bar");
-		console.log(progressBar);
-		if (checkoutStep === SHIPPING_STEP) {
-			progressBar?.style.setProperty("--progress", "40%");
-			return (
-				<div className="progress-bar">
-					<div className="step shipping active">
-						<span>1</span>
-						<span className="text">shipping</span>
-					</div>
-					<div className="step payment">
-						<span>2</span>
-						<span className="text">review & Payment</span>
-					</div>
-				</div>
-			);
-		} else if (checkoutStep === BILLING_STEP) {
-			progressBar?.style.setProperty("--progress", "60%");
-			console.log("done");
-			return (
-				<div className="progress-bar">
-					<div className="step shipping active">
-						<span className="done">
-							<img src={Done} alt="complete" />
-						</span>
-						<span className="text">shipping</span>
-					</div>
-					<div className="step payment active">
-						<span>2</span>
-						<span className="text">review & Payment</span>
-					</div>
-				</div>
-			);
-		} else if (checkoutStep === DETAILS_STEP) {
-			progressBar?.style.setProperty("--progress", "100%");
-			return (
-				<div className="progress-bar">
-					<div className="step shipping active">
-						<span className="done">
-							<img src={Done} alt="complete" />
-						</span>
-						<span className="text">shipping</span>
-					</div>
-					<div className="step payment active">
-						<span className="done">
-							<img src={Done} alt="complete" />
-						</span>
-						<span className="text">review & Payment</span>
-					</div>
-				</div>
-			);
-		}
+
+		progressBar?.style.setProperty("--steps", `${steps.length - 1}`);
+		progressBar?.style.setProperty("--current-step", `${currentStepIndex + 1}`);
+
+		return (
+			<div className="progress-bar">
+				{steps
+					.filter(
+						(e) => e !== DETAILS_STEP || this.stepMap[e].url !== "/success"
+					)
+					.map((step, i) => (
+						<div
+							className={`step ${
+								currentStepIndex > i || currentStepIndex === i ? "active" : ""
+							}`}
+						>
+							<span>
+								{currentStepIndex > i ? (
+									<img src={Done} alt="complete" />
+								) : (
+									i + 1
+								)}
+							</span>
+							<span className="text">{this.stepMap[step].title}</span>
+						</div>
+					))}
+			</div>
+		);
 	}
 
 	render() {
